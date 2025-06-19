@@ -1,245 +1,179 @@
-import { View, Text, ImageBackground, ScrollView, TouchableNativeFeedback } from 'react-native'
+import { View, Text, ScrollView, TouchableNativeFeedback } from 'react-native'
 import React, { useState } from 'react'
 import { fonts } from '../../utils'
 import { MyHeader, MyInput } from '../../components'
 import { colors } from '../../utils/colors'
 import { showMessage } from 'react-native-flash-message'
-import axios from 'axios'
+import { storeData } from '../../utils/localStorage'
 import { Image } from 'react-native'
 
 export default function Register({navigation}) {
-
     const [data, setData] = useState({
-        nama:'',
-        email:'',
-        telepon:'',
-        alamat:'',
-        password:'',
-
-
+        fullName: '',
+        username: '',
+        domicile: '',
+        password: '',
+        confirmPassword: ''
     });
 
-    const handleRegister = () => {
-        if (data.nama.length == '' || data.email.length == '' || data.telepon.length == '' || data.alamat.length == '' || data.password.length == '') { 
+    const handleRegister = async () => {
+        // Validation
+        if (!data.fullName || !data.username || !data.domicile || !data.password || !data.confirmPassword) {
             showMessage({
-                type:'danger',
-                backgroundColor:colors.danger,
-                color:colors.white,
-                message:'Semua Field Harus Diisi!',
-                position:'top',
-                style:{borderBottomRightRadius:10, borderBottomLeftRadius:10,},
-                textStyle:{fontFamily:fonts.primary[600]}
-            })
-        } else if (data.nama.length === '') {
+                type: 'danger',
+                backgroundColor: colors.danger,
+                color: colors.white,
+                message: 'All fields must be filled!',
+                position: 'top'
+            });
+            return;
+        }
+
+        if (data.password !== data.confirmPassword) {
             showMessage({
-                type:'danger',
-                backgroundColor:colors.danger,
-                color:colors.white,
-                message:'Nama Harus Diisi!',
-                position:'top',
-                style:{borderBottomRightRadius:10, borderBottomLeftRadius:10,},
-                textStyle:{fontFamily:fonts.primary[600]}
-        });
-     } else if (data.email.length === '') {
-        showMessage({
-            type:'danger',
-            backgroundColor:colors.danger,
-            color:colors.white,
-            message:'Email Harus Diisi!',
-            position:'top',
-            style:{borderBottomRightRadius:10, borderBottomLeftRadius:10,},
-            textStyle:{fontFamily:fonts.primary[600]}
-        });
-     } else if (data.telepon.length === '') {
-        showMessage({
-            type:'danger',
-            backgroundColor:colors.danger,
-            color:colors.white,
-            message:'Telepon Harus Diisi!',
-            position:'top',
-            style:{borderBottomRightRadius:10, borderBottomLeftRadius:10,},
-            textStyle:{fontFamily:fonts.primary[600]}
-        });
-     } else if (data.alamat.length === '') {
-        showMessage({
-            type:'danger',
-            backgroundColor:colors.danger,
-            color:colors.white,
-            message:'Alamat Harus Diisi!',
-            position:'top',
-            style:{borderBottomRightRadius:10, borderBottomLeftRadius:10,},
-            textStyle:{fontFamily:fonts.primary[600]}
-        });
-     } else if (data.password.length === '') {
-        showMessage({
-            type:'danger',
-            backgroundColor:colors.danger,
-            color:colors.white,
-            message:'Password Harus Diisi!',
-            position:'top',
-            style:{borderBottomRightRadius:10, borderBottomLeftRadius:10,},
-            textStyle:{fontFamily:fonts.primary[600]}
-        });
-     } else {
-        console.log('Data yang dikirim: ', data);
-        axios
-        .post('API KEY', data)
-        .then((res) => {
-            if (res.data.status == 'success') {
-                showMessage({
-                    type:'success',
-                    backgroundColor:colors.success,
-                    color:colors.white,
-                    message:'Selamat Anda Berhasil Mendaftar!'
-                });
-                navigation.navigate('Login');
-            } else {
-                showMessage({
-                    type:'danger',
-                    backgroundColor:colors.danger,
-                    color:colors.white,
-                    message:'Akun Sudah Terdaftar!'
-                });
-            }
-        })
-        .catch((err) => {
-            console.error('Error: ', err);
-        });
-     }
+                type: 'danger',
+                backgroundColor: colors.danger,
+                color: colors.white,
+                message: 'Password and confirmation do not match!',
+                position: 'top'
+            });
+            return;
+        }
+
+        // Prepare user data
+        const userData = {
+            fullName: data.fullName,
+            username: data.username,
+            domicile: data.domicile,
+            password: data.password
+        };
+
+        try {
+            // Save to local storage
+            await storeData('user', userData);
+            
+            showMessage({
+                type: 'success',
+                backgroundColor: colors.success,
+                color: colors.white,
+                message: 'Registration successful!',
+                position: 'top'
+            });
+            
+            navigation.navigate('Login');
+        } catch (error) {
+            console.error('Registration error:', error);
+            showMessage({
+                type: 'danger',
+                backgroundColor: colors.danger,
+                color: colors.white,
+                message: 'Registration failed!',
+                position: 'top'
+            });
+        }
     };
 
-
-  return (
-    <View  style={{
-        flex:1,
-        width:"100%",
-        height:"100%",
-        backgroundColor:colors.white
-    }}>
-    <MyHeader title="Sign Up"/>
-      <ScrollView>
+    return (
         <View style={{
-            padding:10
+            flex: 1,
+            backgroundColor: colors.white
         }}>
+            <MyHeader title="Sign Up"/>
+            <ScrollView>
+                <View style={{ padding: 20 }}>
 
-        <View style={{
-            marginTop:'2%'
-        }}>
+                <View style={{
+                    flexDirection:"row",
+                    justifyContent:"space-between",
+                    alignItems:"center",
+                    marginBottom:20
 
-        <View style={{
-            flexDirection:"row",
-            alignItems:"center",
-            justifyContent:"space-evenly"
+                }}>
 
-        }}>
+                <Image style={{
+                    width:74,
+                    height:74,
+                    alignSelf:"center"
+                }} source={require('../../assets/logo.png')}/>
 
-        <View>
-            <Image style={{
-                width:74,
-                height:74,
-            }} source={require('../../assets/logo.png')}/>
+                <Text style={{
+                    fontFamily:fonts.primary[600],
+                    color:colors.primary,
+                    fontSize:20
+                }}>TropiScan TravelWell{'\n'}(TSTW)</Text>
+
+                </View>
+
+                    <MyInput 
+                        value={data.fullName}
+                        label="Full Name :" 
+                        placeholder="Enter your full name"
+                        onChangeText={(text) => setData({...data, fullName: text})}
+                    />
+
+                    <MyInput 
+                        value={data.username}
+                        label="Username :" 
+                        placeholder="Enter your username"
+                        onChangeText={(text) => setData({...data, username: text})}
+                    />
+
+                    <MyInput 
+                        value={data.domicile}
+                        label="Domicile :" 
+                        placeholder="Enter your domicile"
+                        onChangeText={(text) => setData({...data, domicile: text})}
+                    />
+
+                    <MyInput 
+                        value={data.password}
+                        label="Password :" 
+                        placeholder="Enter your password"
+                        secureTextEntry={true}
+                        onChangeText={(text) => setData({...data, password: text})}
+                    />
+
+                    <MyInput 
+                        value={data.confirmPassword}
+                        label="Confirm Password :" 
+                        placeholder="Confirm your password"
+                        secureTextEntry={true}
+                        onChangeText={(text) => setData({...data, confirmPassword: text})}
+                    />
+
+                    <TouchableNativeFeedback onPress={handleRegister}>
+                        <View style={{
+                            padding: 15,
+                            backgroundColor: colors.primary,
+                            borderRadius: 10,
+                            marginTop: 30,
+                        }}>
+                            <Text style={{
+                                fontFamily: fonts.primary[600],
+                                color: colors.white,
+                                textAlign: 'center',
+                                fontSize: 16
+                            }}>Register</Text>
+                        </View>
+                    </TouchableNativeFeedback>
+
+                    <TouchableNativeFeedback onPress={() => navigation.navigate("Login")}>
+                        <View style={{
+                            padding: 10,
+                            marginTop: 20,
+                        }}>
+                            <Text style={{
+                                fontFamily: fonts.primary[400],
+                                textAlign: "center",
+                                color: colors.primary,
+                                fontSize: 14,
+                            }}>
+                                Already have an account? <Text style={{fontFamily: fonts.primary[600]}}>Login</Text>
+                            </Text>
+                        </View>
+                    </TouchableNativeFeedback>
+                </View>
+            </ScrollView>
         </View>
-
-        <View style={{
-            
-        }}>
-            <Text style={{
-                fontFamily:fonts.primary[600],
-                color:colors.primary,
-                fontSize:20,
-            }}>TropiScan TravelWell{'\n'}(TSTW)</Text>
-        </View>
-
-        </View>
-           
-
-            <View style={{
-                padding:10,
-            }}>
-
-            <MyInput value={data.nama} 
-            label="Full Name :" 
-            colorlabel='white' 
-            placeholder="Full Name" 
-            onChangeText={(x) => setData({...data, 'nama':x})}
-            />
-
-            <MyInput 
-            value={data.email}
-            label="Username :" 
-            colorlabel='white' 
-            placeholder="Username"
-            onChangeText={(x) => setData({...data, 'email':x})}
-            />
-
-            <MyInput 
-            value={data.telepon}
-            label="Domicile :"
-            colorlabel='white' 
-            placeholder="Domicile"
-            onChangeText={(x) => setData({...data, 'telepon':x})}
-            />
-
-            <MyInput 
-            value={data.alamat}
-            label="Password :" 
-            colorlabel='white'
-            placeholder="Password"
-            onChangeText={(x) => setData({...data, 'alamat':x})}
-             />
-
-            <MyInput
-            value={data.password}
-             label="Confirm Password :" 
-             colorlabel='white' 
-             placeholder="Isi Kata Sandi" 
-             secureTextEntry={true}
-            onChangeText={(x) => setData({...data, 'password':x})}
-             />
-
-
-            <View>
-                <TouchableNativeFeedback onPress={handleRegister}>
-                    <View style={{
-                        padding:10,
-                        backgroundColor:colors.primary,
-                        borderRadius:10,
-                        marginTop:30,
-
-                    }}>
-                        <Text style={{
-                            fontFamily:fonts.primary[600],
-                            color:colors.white,
-                            textAlign:'center',
-
-                        }}>Sign Up</Text>
-                    </View>
-                </TouchableNativeFeedback>
-
-                
-                                    <TouchableNativeFeedback onPress={() => navigation.navigate("Register")}>
-                                                       <View style={{
-                                                           padding:10,
-                                                         
-                                                           borderRadius:10,
-                                                           marginTop:20,
-                                                       }}>
-                                                           <Text style={{
-                                                               fontFamily:fonts.primary[400],
-                                                               textAlign:"center",
-                                                               color:colors.primary,
-                                                               fontSize:12,
-                                                           
-                                   
-                                                           }}>Don’t have an account? Please <Text style={{fontFamily:fonts.primary[600]}}> Sign Up</Text></Text>
-                                                       </View>
-                                                   </TouchableNativeFeedback>
-            </View>
-            </View>
-        </View>
-
-        </View>
-      </ScrollView>
-    </View>
-  )
+    )
 }

@@ -44,8 +44,7 @@ export default function BottomNavigator({ state, descriptors, navigation }) {
         borderTopWidth: 1,
         borderTopColor: Color.blueGray[100],
         height: 65,
-        borderTopRightRadius: 20,
-        borderTopLeftRadius: 20,
+    
       }}
     >
       {state.routes.map((route, index) => {
@@ -85,6 +84,9 @@ export default function BottomNavigator({ state, descriptors, navigation }) {
             break;
           case 'Profile':
             iconName = isFocused ? 'person' : 'person-outline';
+            break;
+          case 'Riwayat':
+            iconName = isFocused ? 'time' : 'time-outline';
             break;
           default:
             iconName = 'help-circle-outline';

@@ -35,7 +35,7 @@ export default function MyCalendar({
       <Text
         style={{
           fontFamily:fonts.primary[600],
-          color: colors.primary,
+          color: colors.black,
           marginBottom: 8,
           marginLeft:10
         }}>
@@ -44,9 +44,9 @@ export default function MyCalendar({
 
 
       <View style={{
-        backgroundColor: colors.white,
+        backgroundColor: colors.secondary,
         borderWidth: 1,
-        borderRadius: 30,
+        borderRadius: 10,
         borderColor: Color.blueGray[300]
       }}>
 

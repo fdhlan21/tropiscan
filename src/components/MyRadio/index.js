@@ -6,10 +6,16 @@ export default function MyRadio({ label, selected, onPress }) {
     return (
         <TouchableWithoutFeedback onPress={onPress}>
             <View style={styles.container}>
-                <View style={styles.radioButton}>
+                <View style={[
+                    styles.radioButton,
+                    selected && styles.radioButtonSelectedBorder
+                ]}>
                     {selected && <View style={styles.radioButtonSelected} />}
                 </View>
-                <Text style={styles.radioLabel}>{label}</Text>
+                <Text style={[
+                    styles.radioLabel,
+                    selected && styles.radioLabelSelected
+                ]}>{label}</Text>
             </View>
         </TouchableWithoutFeedback>
     );
@@ -19,28 +25,38 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 10,
+        marginVertical: 8,
+        paddingVertical: 8,
+        marginHorizontal:15
+
     },
     radioButton: {
-        width: 24,   // Ukuran lingkaran besar
+        width: 24,
         height: 24,
-        backgroundColor: colors.white,
-        borderRadius: 12,  // Membuat lingkaran
-        borderColor: colors.primary,  // Warna border
-        borderWidth: 2,
+        backgroundColor: colors.secondary,
+        borderRadius: 12,
+        borderColor: colors.primary, // Default border color
+        borderWidth: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
+    radioButtonSelectedBorder: {
+        borderColor: colors.primary, // Selected border color
+    },
     radioButtonSelected: {
-        width: 12,   // Ukuran lingkaran kecil di dalamnya
+        width: 12,
         height: 12,
-        backgroundColor: colors.primary,  // Warna lingkaran kecil saat dipilih
-        borderRadius: 6,  // Membuat lingkaran kecil
+        backgroundColor: colors.primary,
+        borderRadius: 6,
     },
     radioLabel: {
-        marginLeft: 15,  // Jarak antara radio button dan teks
-        fontSize: MyDimensi / 4,
+        marginLeft: 12,
+        fontSize: MyDimensi / 5,
+        fontFamily: fonts.primary[400],
+        color: colors.primary, // Default text color
+    },
+    radioLabelSelected: {
         fontFamily: fonts.secondary[600],
-        color: colors.primary,
+        color: colors.primary, // Selected text color
     },
 });

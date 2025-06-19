@@ -68,6 +68,10 @@ import {
   BuktiPengeluaran,
   TambahBuktiPengeluaran,
   HasilBuatPenawaran,
+  WelcomePage,
+  SelfCheck,
+  SelfCheckDua,
+  DetailArtikel,
 
 
 
@@ -87,7 +91,9 @@ const MainApp = () => {
   return (
     <Tab.Navigator initialRouteName='Produk' tabBar={props => <BottomNavigator {...props} />}>
       <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Riwayat" component={Riwayat} />
       <Tab.Screen name="Profile" component={Account} />
+     
 
     </Tab.Navigator>
   );
@@ -95,7 +101,7 @@ const MainApp = () => {
 
 export default function Router() {
   return (
-    <Stack.Navigator initialRouteName='Register'>
+    <Stack.Navigator initialRouteName=''>
       <Stack.Screen
         name="Splash"
         component={Splash}
@@ -106,7 +112,14 @@ export default function Router() {
 
 
 
+ <Stack.Screen
+        name="Riwayat"
+        component={MainApp}
+        options={{
+          headerShown: false,
 
+        }}
+      />
 
       <Stack.Screen
         name="Account"
@@ -118,18 +131,9 @@ export default function Router() {
       />
 
 
-<Stack.Screen
-        name="BuatPenawaran"
-        component={BuatPenawaran}
-        options={{
-          headerShown: false,
-
-        }}
-      />
-
-<Stack.Screen
-        name="TambahPenawaran"
-        component={TambahPenawaran}
+          <Stack.Screen
+        name="WelcomePage"
+        component={WelcomePage}
         options={{
           headerShown: false,
 
@@ -137,9 +141,38 @@ export default function Router() {
       />
 
 
+       <Stack.Screen
+        name="SelfCheck"
+        component={SelfCheck}
+        options={{
+          headerShown: false,
+
+        }}
+      />
+
+
 <Stack.Screen
-        name="DownloadBrosur"
-        component={DonwnloadBrosur}
+        name="SelfCheckDua"
+        component={SelfCheckDua}
+        options={{
+          headerShown: false,
+
+        }}
+      />
+
+<Stack.Screen
+        name="Artikel"
+        component={Artikel}
+        options={{
+          headerShown: false,
+
+        }}
+      />
+
+
+<Stack.Screen
+        name="DetailArtikel"
+        component={DetailArtikel}
         options={{
           headerShown: false,
 

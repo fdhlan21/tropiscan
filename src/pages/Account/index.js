@@ -1,191 +1,129 @@
 import React, { useEffect, useState } from 'react';
 import {
-    StyleSheet,
-    Text,
-    View,
-    SafeAreaView,
-    Image,
-    Linking,
-    Alert,
-    ActivityIndicator,
+  Text,
+  View,
+  SafeAreaView,
+  Image,
+  Alert,
+  ActivityIndicator,
+  ScrollView
 } from 'react-native';
-import { windowWidth, fonts, MyDimensi } from '../../utils/fonts';
-import { getData, MYAPP, storeData, urlAPI, urlApp, urlAvatar } from '../../utils/localStorage';
-import { Color, colors } from '../../utils/colors';
+import { fonts, colors } from '../../utils';
+import { getData } from '../../utils/localStorage';
 import { MyButton, MyGap, MyHeader } from '../../components';
-import { Icon } from 'react-native-elements';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useIsFocused } from '@react-navigation/native';
-import axios from 'axios';
-import LinearGradient from 'react-native-linear-gradient';
-import moment from 'moment';
-import { ScrollView } from 'react-native';
-import { Collator } from 'intl';
 
-export default function ({ navigation, route }) {
-    const [user, setUser] = useState({});
-    const [com, setCom] = useState({});
-    const isFocused = useIsFocused();
-    const [wa, setWA] = useState('');
-    const [open, setOpen] = useState(false);
+export default function Profile({ navigation }) {
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
+  const isFocused = useIsFocused();
 
-
-
-    useEffect(() => {
-
-
-        if (isFocused) {
-            getData('user').then(res => {
-                console.log(res)
-                setOpen(true);
-                setUser(res);
-
-            });
-        }
-
-
-
-
-    }, [isFocused]);
-
-
-
-    const btnKeluar = () => {
-        Alert.alert(MYAPP, 'Apakah kamu yakin akan keluar ?', [
-            {
-                text: 'Batal',
-                style: "cancel"
-            },
-            {
-                text: 'Keluar',
-                onPress: () => {
-                    storeData('user', null);
-
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Splash' }],
-                    });
-                }
-            }
-        ])
-    };
-
-    const MyList = ({ label, value }) => {
-        return (
-            <View style={{
-                marginTop:10
-            }}>
-                 <Text
-                    style={{
-                       fontFamily:fonts.primary[600],
-                       color:colors.primary,
-                       marginLeft:10
-
-                    }}>
-                    {label}
-                </Text>
-
-
-                <View
-                style={{
-                    marginVertical: 2,
-                    padding: 5,
-                    paddingHorizontal: 10,
-                    backgroundColor: Color.blueGray[50],
-                    borderRadius: 30,
-                    height:40
-                }}>
-               
-                <Text
-                    style={{
-                        ...fonts.body3,
-                        color: Color.blueGray[900],
-                    }}>
-                    {value}
-                </Text>
-            </View>
-            </View>
-          
-        )
+  useEffect(() => {
+    if (isFocused) {
+      getData('user').then(res => {
+        setUser(res || {});
+        setLoading(false);
+      });
     }
+  }, [isFocused]);
+
+  const btnKeluar = () => {
+    Alert.alert('Confirmation', 'Are you sure you want to log out?', [
+      {
+        text: 'Cancel',
+        style: "cancel"
+      },
+      {
+        text: 'Log Out',
+        onPress: () => {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+          });
+        }
+      }
+    ]);
+  };
+
+  const MyList = ({ label, value }) => {
     return (
-        <SafeAreaView style={{
-            flex: 1,
-            backgroundColor: colors.white
+      <View style={{ marginTop: 10 }}>
+        <Text style={{
+          fontFamily: fonts.primary[600],
+          color: colors.primary,
+          marginLeft: 10
         }}>
-
-
-            <MyHeader title="Akun Saya" onPress={() => navigation.goBack()} />
-            {!open && <View style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}>
-                <ActivityIndicator size="large" color={colors.primary} />
-            </View>}
-            <ScrollView showsVerticalScrollIndicator={false}>
-                {open &&
-
-                    <View style={{
-                        margin: 5,
-                        flex: 1,
-                    }}>
-                        <View style={{
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                            
-                        </View>
-                        <View style={{ padding: 10, }}>
-                            <MyList label="Nama Lengkap :" value={'Angga Kurniawan'} />
-                            <MyList label="Email :" value={'anggakurniawan12@gmail.com'} />
-                            <MyList label="Telepon :" value={'0865665467467'} />
-                            <MyList label="Alamat Lengkap :" value={'Depok, Jawa Barat'} />
-                            <View style={{
-                                padding:10,
-                                marginTop:10,
-
-                            }}>
-
-                            <Text style={{
-                                fontFamily  :fonts.primary[600],
-                                color:colors.primary
-                            }}>
-                            Foto Tanda Tangan : 
-                            </Text>
-
-                            <View style={{
-                                padding:10,
-                                marginTop:10,
-                                backgroundColor:Color.blueGray[50],
-                                borderRadius:30
-                            }}>
-
-                            <Image style={{
-                                width:127,
-                                height:120,
-                                alignSelf:'center'
-                            }} source={require('../../assets/ttd_dummmy.png')}/>
-
-                            </View>
-
-                            </View>
-                           
-                        </View>
-                        {/* data detail */}
-                    </View>
-
-                }
-                <View style={{
-                    padding: 20,
-                }}>
-                    <MyButton warna={colors.primary} title="Edit Profile"  onPress={() => navigation.navigate('AccountEdit', user)} />
-                    <MyGap jarak={10} />
-                    <MyButton onPress={btnKeluar} warna={Color.blueGray[400]} title="Log Out"  iconColor={colors.white} colorText={colors.white} />
-                </View>
-            </ScrollView>
-        </SafeAreaView >
+          {label}
+        </Text>
+        <View style={{
+          marginVertical: 2,
+          padding: 10,
+          backgroundColor: colors.lightGray,
+          borderRadius: 10,
+          minHeight: 40
+        }}>
+          <Text style={{
+            fontFamily: fonts.primary[400],
+            color: colors.dark,
+          }}>
+            {value || '-'}
+          </Text>
+        </View>
+      </View>
     );
-}
+  };
 
-const styles = StyleSheet.create({});
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
+      <MyHeader title="My Profile" onPress={() => navigation.goBack()} />
+      
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={{ padding: 20 }}>
+          {/* Profile Picture - Display only */}
+          <View style={{ alignItems: 'center', marginBottom: 20 }}>
+            <Image 
+              source={user.profileImage ? { uri: user.profileImage } : require('../../assets/dummy_profile.png')}
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: 60,
+                borderWidth: 2,
+                borderColor: colors.primary
+              }}
+            />
+          </View>
+
+          {/* User Info - Updated to match register fields */}
+          <MyList label="Full Name:" value={user.fullName} />
+          <MyList label="Username:" value={user.username} />
+          <MyList label="Domicile:" value={user.domicile} />
+
+          {/* Password fields are not shown for security reasons */}
+        </View>
+
+        <View style={{ padding: 20 }}>
+          <MyButton 
+            title="Edit Profile" 
+            onPress={() => navigation.navigate('MainApp')} 
+            warna={colors.primary} 
+          />
+          <MyGap jarak={10} />
+          <MyButton 
+            title="Log Out" 
+            onPress={btnKeluar} 
+            warna={colors.danger} 
+            colorText={colors.white} 
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
